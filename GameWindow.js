@@ -10,7 +10,7 @@ function GameWindow (canvas, rootView) {
 GameWindow.prototype = {
 	render: function() {
 		this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-		this.rootView.drawAtPosition(this.ctx, 0, 0);
+		this.rootView.renderHierarchy(this.ctx, 0, 0);
 	},
 
 	registerEvents: function() {

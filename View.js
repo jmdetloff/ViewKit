@@ -52,7 +52,7 @@ View.prototype = {
 		this.addSubview(subview);
 	},
 
-	drawAtPosition: function(ctx, x, y) {
+	renderHierarchy: function(ctx, x, y) {
 		if (this.hidden) {
 			return;
 		}
@@ -66,19 +66,25 @@ View.prototype = {
 			y = y / this.scale;
 		}
 
-		if (this.backgroundColor) {
-			ctx.fillStyle = this.backgroundColor;
-			ctx.fillRect(x, y, this.frame.width, this.frame.height);
-		}
+		this.drawAtPosition(ctx, x, y);
 
 		for (var i = 0; i < this.subviews.length; i++) {
 			var subview = this.subviews[i];
 			var absX = x + subview.frame.x;
 			var absY = y + subview.frame.y;
-			subview.drawAtPosition(ctx, absX, absY);
+			subview.renderHierarchy(ctx, absX, absY);
 		}
 
 		ctx.restore();
+	},
+
+	drawAtPosition: function(ctx, x, y) {
+		if (this.backgroundColor) {
+			ctx.save();
+			ctx.fillStyle = this.backgroundColor;
+			ctx.fillRect(x, y, this.frame.width, this.frame.height);
+			ctx.restore();
+		}
 	},
 
 	checkForClick: function(x, y) {
