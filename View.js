@@ -57,6 +57,15 @@ View.prototype = {
 			return;
 		}
 
+		ctx.save();
+
+		if (this.scale) {
+			ctx.imageSmoothingEnabled = false;
+			ctx.scale(this.scale, this.scale);
+			x = x / this.scale;
+			y = y / this.scale;
+		}
+
 		if (this.backgroundColor) {
 			ctx.fillStyle = this.backgroundColor;
 			ctx.fillRect(x, y, this.frame.width, this.frame.height);
@@ -68,11 +77,18 @@ View.prototype = {
 			var absY = y + subview.frame.y;
 			subview.drawAtPosition(ctx, absX, absY);
 		}
+
+		ctx.restore();
 	},
 
 	checkForClick: function(x, y) {
 		if (this.interactionDisabled) {
 			return false;
+		}
+
+		if (this.scale) {
+			x = x / this.scale;
+			y = y / this.scale;
 		}
 
 		if (this.hitCheck(x, y)) {
@@ -90,7 +106,7 @@ View.prototype = {
 			}
 
 			if (!subviewClicked && this.onClick) {
-				this.onClick(x, y);
+				this.onClick();
 			}
 
 			return true;
@@ -102,6 +118,11 @@ View.prototype = {
 	mouseDown: function(x, y) {
 		if (!this.hitCheck(x, y) || this.interactionDisabled) {
 			return false;
+		}
+
+		if (this.scale) {
+			x = x / this.scale;
+			y = y / this.scale;
 		}
 
 		var subviewHit = false;
@@ -134,6 +155,11 @@ View.prototype = {
 			return false;
 		}
 
+		if (this.scale) {
+			x = x / this.scale;
+			y = y / this.scale;
+		}
+
 		var subviewHit = false;
 
 		x -= this.frame.x;
@@ -150,7 +176,7 @@ View.prototype = {
 		if (!subviewHit && this.ownsMouse) {
 			this.ownsMouse = false;
 			if (this.onMouseUp) {
-				this.onMouseUp(x, y);
+				this.onMouseUp();
 			}
 
 			return true;
@@ -166,7 +192,13 @@ View.prototype = {
 			return false;
 		}
 
+		if (this.scale) {
+			x = x / this.scale;
+			y = y / this.scale;
+		}
+
 		var subviewHit = false;
+		var hit = this.hitCheck(x, y);
 
 		x -= this.frame.x;
 		y -= this.frame.y;
@@ -184,6 +216,12 @@ View.prototype = {
 				this.onMouseMove(x, y);
 			}
 			return true;
+		} else if (this.onMouseMoveHover) {
+			if (hit) {
+				this.onMouseMoveHover(x, y);
+			} else if (this.onMouseMoveOffHover) {
+				this.onMouseMoveOffHover(x, y);
+			}
 		}
 
 		return subviewHit;
@@ -193,6 +231,11 @@ View.prototype = {
 		if (this.interactionDisabled) {
 			this.disownMouse();
 			return false;
+		}
+
+		if (this.scale) {
+			x = x / this.scale;
+			y = y / this.scale;
 		}
 
 		var hit = this.hitCheck(x, y);

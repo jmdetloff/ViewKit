@@ -18,8 +18,8 @@ LabelView.prototype.drawAtPosition = function(ctx, x, y) {
 
 		if (this.lineWrap && this.frame.width > 0 && this.lineHeight) {
 			var newlineChunks = this.text.split('\n');
-			for (var x = 0; x < newlineChunks.length; x++) {
-				var paragraph = newlineChunks[x];
+			for (var j = 0; j < newlineChunks.length; j++) {
+				var paragraph = newlineChunks[j];
 				if (paragraph === "") {
 					y += this.lineHeight;
 	        		if (this.maxTextHeight && y > this.maxTextHeight) {
@@ -78,6 +78,9 @@ LabelView.prototype.numberOfLines = function() {
 		return this.lineHeight;
 	}
 
+	globalCtx.save();
+	globalCtx.font = this.font;
+
 	var numLines = 0;
 
 	var newlineChunks = this.text.split('\n');
@@ -107,6 +110,8 @@ LabelView.prototype.numberOfLines = function() {
     	}
     	numLines++;
 	}	
+
+	globalCtx.restore();
 
 	return numLines;
 }
