@@ -106,7 +106,7 @@ View.prototype = {
 			}
 
 			if (!subviewClicked && this.onClick) {
-				this.onClick();
+				this.onClick(x, y);
 			}
 
 			return true;
@@ -176,7 +176,7 @@ View.prototype = {
 		if (!subviewHit && this.ownsMouse) {
 			this.ownsMouse = false;
 			if (this.onMouseUp) {
-				this.onMouseUp();
+				this.onMouseUp(x, y);
 			}
 
 			return true;
