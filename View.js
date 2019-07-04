@@ -233,6 +233,42 @@ View.prototype = {
 		return subviewHit;
 	},
 
+	mouseWheel: function(x, y, deltaY) {
+		if (this.interactionDisabled) {
+			return false;
+		}
+
+		if (this.scale) {
+			x = x / this.scale;
+			y = y / this.scale;
+		}
+
+		var subviewHit = false;
+		var hit = this.hitCheck(x, y);
+
+		if (!hit) {
+			return false;;
+		}
+
+		x -= this.frame.x;
+		y -= this.frame.y;
+
+		for (var i = this.subviews.length - 1; i >= 0; i--) {
+			var subview = this.subviews[i];
+			if (subview.mouseWheel(x, y, deltaY)) {
+				subviewHit = true;
+				break;
+			}
+		}
+
+		if (this.onMouseWheel) {
+			this.onMouseWheel(x, y, deltaY);
+			return true;
+		} else {
+			return false;
+		}
+	},
+
 	mouseCancel: function(x, y) {
 		if (this.interactionDisabled) {
 			this.disownMouse();

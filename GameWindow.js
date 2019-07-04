@@ -56,6 +56,12 @@ GameWindow.prototype = {
         	gameWindow.rootView.mouseMove(x, y);
     	}, false);
 
+        addEventListener("wheel", event => {
+            var x = event.pageX - gameWindow.canvas.offsetLeft;
+            var y = event.pageY - gameWindow.canvas.offsetTop;
+            gameWindow.rootView.mouseWheel(x, y, event.deltaY);
+        });
+
     	addEventListener('dblclick', function(event){ 
     	});
 	}
