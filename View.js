@@ -217,10 +217,11 @@ View.prototype = {
 			}
 		}
 
+		if (this.onMouseMove) {
+			this.onMouseMove(x, y);
+		}
+
 		if (this.ownsMouse) {
-			if (this.onMouseMove) {
-				this.onMouseMove(x, y);
-			}
 			return true;
 		} else if (this.onMouseMoveHover) {
 			if (hit) {

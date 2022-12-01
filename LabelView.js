@@ -17,6 +17,9 @@ LabelView.prototype.drawAtPosition = function(ctx, x, y) {
 		ctx.fillStyle = this.textColor ? this.textColor : 'rgba(0, 0, 0, 1)';
 
 		if (this.lineWrap && this.frame.width > 0 && this.lineHeight) {
+
+			var shownCharacters = 0;
+
 			var newlineChunks = this.text.split('\n');
 			for (var j = 0; j < newlineChunks.length; j++) {
 				var paragraph = newlineChunks[j];
@@ -36,7 +39,23 @@ LabelView.prototype.drawAtPosition = function(ctx, x, y) {
 	          		var metrics = ctx.measureText(testLine);
 	          		var testWidth = metrics.width;
 	          		if (testWidth > this.frame.width && i > 0) {
-	            		ctx.fillText(currentLine, x, y);
+	          			var additionalChars = currentLine.length;
+	          			currentLine = currentLine.substring(0, currentLine.length - 1);
+	          			var xPos;
+	          			if (this.centerHorizontally) {
+	          				xPos = x + (this.frame.width - ctx.measureText(currentLine).width) / 2;
+	          			} else if (this.rightJustify) {
+	          				xPos = x + this.frame.width - ctx.measureText(currentLine).width;
+	          			} else {
+	          				xPos = x;
+	          			}
+	          			if (this.visibleSpan != undefined && shownCharacters + additionalChars > this.visibleSpan) {
+	          				var numToShow = this.visibleSpan - shownCharacters;
+	          				numToShow = Math.max(0, numToShow);
+	          				currentLine = currentLine.substring(0, numToShow);
+	          			}
+	            		ctx.fillText(currentLine, xPos, y);
+	            		shownCharacters += additionalChars;
 	            		currentLine = chunks[i] + ' ';
 	            		y += this.lineHeight;
 	            		if (this.maxTextHeight && y > this.maxTextHeight) {
@@ -49,7 +68,23 @@ LabelView.prototype.drawAtPosition = function(ctx, x, y) {
 	      				}
 	          		}
 	        	}
-	        	ctx.fillText(currentLine, x, y);
+	        	var additionalChars = currentLine.length;
+				currentLine = currentLine.substring(0, currentLine.length - 1);
+      			var xPos;
+      			if (this.centerHorizontally) {
+      				xPos = x + (this.frame.width - ctx.measureText(currentLine).width) / 2;
+      			} else if (this.rightJustify) {
+      				xPos = x + this.frame.width - ctx.measureText(currentLine).width;
+      			} else {
+      				xPos = x;
+      			}
+      			if (this.visibleSpan != undefined && shownCharacters + additionalChars > this.visibleSpan) {
+      				var numToShow = this.visibleSpan - shownCharacters;
+      				numToShow = Math.max(0, numToShow);
+      				currentLine = currentLine.substring(0, numToShow);
+      			}
+	        	ctx.fillText(currentLine, xPos, y);
+      			shownCharacters += additionalChars;
 	        	y += this.lineHeight;
         		if (this.maxTextHeight && y > this.maxTextHeight) {
         			return;
